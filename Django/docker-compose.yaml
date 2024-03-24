@@ -1,0 +1,42 @@
+services:
+  web:
+    build: .
+    container_name: userapp
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8000:8000
+    volumes:
+         - api:/usr/src/app/
+    networks:
+      - fullstack
+    # command: /app/test.sh local
+    # env_file: .env
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - fullstack
+
+volumes:
+  api:
+  database_postgres:
+
+networks:
+  fullstack:
