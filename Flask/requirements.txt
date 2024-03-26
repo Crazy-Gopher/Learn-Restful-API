@@ -1,0 +1,7 @@
+marshmallow
+webargs
+flask==2.2.5
+marshmallow-sqlalchemy
+flask-marshmallow
+Flask-SQLAlchemy
+psycopg2
