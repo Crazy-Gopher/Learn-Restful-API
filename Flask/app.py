@@ -1,70 +1,14 @@
-# from functools import wraps
-from flask import Flask, Response, request, g, current_app
+import logging
+
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from typing import Any, Callable, List, Type
 
 from config import Config
-from user.crud import UserView, UserDetailView, HealthCheckView
+from middlewares import run_before_request, run_after_request
+from urls import register_paths
+from commands import add_admin
 
-"""
-#!/usr/bin/python3
-# -- coding: utf-8 --
-# from asr_python import load_profile_dotenv
-# config path for all the files
-# load_profile_dotenv(CONFIG_PATH)
-
-# loading env variables before app start up
-# env vars can be accessed from os.environ dict
-"""
-
-def register_paths(app: Flask):
-    healthcheck_view: Callable[..., Response] = HealthCheckView.as_view(HealthCheckView.__name__)
-    app.add_url_rule('/healthcheck',view_func=healthcheck_view)
-
-    views = [
-        (UserView, '/api/v1/users/', ['GET', 'POST']),
-        (UserDetailView, '/api/v1//users/<int:id>/', ['GET', 'DELETE', 'PUT', 'PATCH'])
-    ]
-
-    for view_obj, view_path, methods in views:
-        view = view_obj.as_view(view_obj.__name__)
-        app.add_url_rule(view_path, view_func=view, methods=methods)
-
-
-
-
-import time
-import logging
-from flask.json import JSONEncoder
-from datetime import date
-
-def run_before_request():
-    g.start_time = time.time()
-
-def run_after_request(response: Response):
-    if response and response.status_code == 200:
-        if request.url_rule:
-            print(request.url_rule.rule)
-        else:
-            print(request.path)
-        exec_start_time = g.start_time
-        t = time.time() - exec_start_time
-        print("time: " + str(t))
-    return response
-
-class CustomJSONEncoder(JSONEncoder):
-    """
-    This is a custom method to handle date object format in Flask JSONinfy.
-    Default Date format: "Thu, 22 Oct 2020 00:00:00 GMT"
-    New Date format: "2021-01-22"
-    Any other type of data remains same, but can be edited here.
-    """
-
-    def default(self, o):  # pylint: disable=E0202
-        if isinstance(o, date):
-            return o.isoformat()
-        return super().default(o)
 
 def app_config(app: Flask) -> None:
     app.config.from_object(Config())
@@ -72,40 +16,41 @@ def app_config(app: Flask) -> None:
     app.after_request(run_after_request)
     app.logger.setLevel(logging.INFO)
 
-def register_commands(app):
-    from commands import add_admin
+
+def register_commands(app: Flask):
     app.cli.add_command(add_admin)
 
+
 def create_app():
-    # Initialize flask app with the name of the file
     app: Flask = Flask(__name__)
     app_config(app)
     register_paths(app)
     register_commands(app)
-    app.SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:postgres@127.0.0.1:5432/flask"
-    # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://user:password@host:port/database_name"
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:postgres@127.0.0.1:5432/flask"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.json_encoder = CustomJSONEncoder
     db = SQLAlchemy(app)
     ma = Marshmallow(app)
     return app, db, ma
 
+
 app, db, ma = create_app()
+with app.app_context():
+    db.create_all()
 
-#this is our database model
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(100))
-    password = db.Column(db.String(200))
-    email = db.Column(db.String(50), unique = True)
-    is_active = db.Column(db.Boolean())
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port="8002", debug=True)
 
-    def _init_(self, username, password, email, is_active):
-        self.username = username
-        self.password = password
-        self.email = email
-        self.is_active = is_active
+# this is our database model
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key = True)
+#     username = db.Column(db.String(100))
+#     password = db.Column(db.String(200))
+#     email = db.Column(db.String(50), unique = True)
+#     is_active = db.Column(db.Boolean())
+
+#     def _init_(self, username, password, email, is_active):
+#         self.username = username
+#         self.password = password
+#         self.email = email
+#         self.is_active = is_active
 
 
 # from app import ma
@@ -118,30 +63,6 @@ class User(db.Model):
 #     class Meta:
 #         model = User
 #         include_fk = True
-
-
-with app.app_context():
-    db.create_all()
-
-@app.errorhandler(422)
-@app.errorhandler(400)
-def handle_validation_error(err):
-    exc = getattr(err, "exc", None)
-    if exc:
-        headers = err.data["headers"]
-        messages = exc.messages
-    else:
-        headers = None
-        messages = ["Invalid request."]
-    if headers:
-        return {"errors": messages}, err.code, headers
-    else:
-        return {"errors": messages}, err.code
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="8002", debug=True)
-
 
 
 """
@@ -208,3 +129,29 @@ app.add_url_rule("/view_path", view_func=insd)
 #             print(type(e))
 #             return SchemaValidationError(e, 200, error_details={'username': ['String can not be blank']}).response
 #     return _admin_auth
+
+# from flask.json import JSONEncoder
+#!/usr/bin/python3
+# -- coding: utf-8 --
+# from asr_python import load_profile_dotenv
+# config path for all the files
+# load_profile_dotenv(CONFIG_PATH)
+
+# loading env variables before app start up
+# env vars can be accessed from os.environ dict
+
+
+# class CustomJSONEncoder(JSONEncoder):
+#
+#     """
+#     # app.json_encoder = CustomJSONEncoder
+#     This is a custom method to handle date object format in Flask JSONinfy.
+#     Default Date format: "Thu, 22 Oct 2020 00:00:00 GMT"
+#     New Date format: "2021-01-22"
+#     Any other type of data remains same, but can be edited here.
+#     """
+
+#     def default(self, o):  # pylint: disable=E0202
+#         if isinstance(o, date):
+#             return o.isoformat()
+#         return super().default(o)

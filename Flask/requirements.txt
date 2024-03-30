@@ -1,6 +1,6 @@
 marshmallow
 webargs
-flask==2.2.5
+flask
 marshmallow-sqlalchemy
 flask-marshmallow
 Flask-SQLAlchemy

@@ -4,12 +4,11 @@ from flask.views import MethodView
 from webargs.flaskparser import use_args, use_kwargs
 from user.schemas import RequestUser, ResponseUser, UpdateRequestUser, PatchRequestUser, HealthStatusResp
 from http import HTTPStatus
-
-
 from flask import request, jsonify, Response, helpers, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import json
+from sqlalchemy.orm.exc import NoResultFound
 
 users_schema = ResponseUser(many=True)
 user_schema = ResponseUser()
@@ -28,11 +27,12 @@ class HealthCheckView(MethodView):
         # resp: Response = helpers.bnm(jsonify(result), HTTPStatus.OK)
         return resp
 
-from sqlalchemy.orm.exc import NoResultFound
+
 class UserView(MethodView):
 
     def get(self) -> Response:
-        from app import db, User
+        from app import db
+        from user.models import User
         users = User.query.all()
         result = users_schema.dump(users)
         return jsonify(result)
@@ -45,7 +45,8 @@ class UserView(MethodView):
     # @use_kwargs(RequestUser(), locations=('querystring'))
     @use_args(RequestUser(), location='json')
     def post(self, request: RequestUser):
-        from app import db, User
+        from app import db
+        from user.models import User
         email = request.get("email")
         try:
             user = db.session.execute(db.select(User).filter_by(email=email)).one()
@@ -70,7 +71,8 @@ class UserView(MethodView):
 class UserDetailView(MethodView):
 
     def get(self, id: int):
-        from app import db, User
+        from app import db
+        from user.models import User
         user = User.query.get(id)
         result = user_schema.dump(user)
         return jsonify(result)
@@ -88,7 +90,8 @@ class UserDetailView(MethodView):
         # list, tuple with headers or status, Response instance, or WSGI callable, but it was a int.
 
     def delete(self, id: int):
-        from app import db, User
+        from app import db
+        from user.models import User
         user = User.query.get(id)
         db.session.delete(user)
         db.session.commit()
@@ -97,7 +100,8 @@ class UserDetailView(MethodView):
 
     @use_args(UpdateRequestUser(), location='json')
     def put(self, request: Dict, id:int):
-        from app import db, User
+        from app import db
+        from user.models import User
         user = User.query.get(id)
         # user.update(**request)
         user.username = request.get("username")
@@ -110,7 +114,8 @@ class UserDetailView(MethodView):
 
     @use_args(PatchRequestUser(), location='json')
     def patch(self, request: Dict, id:int):
-        from app import db, User
+        from app import db
+        from user.models import User
         user = User.query.get(id)
         if request:
             if request.get("username"):

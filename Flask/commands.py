@@ -11,7 +11,8 @@ def add_admin(admin_email: str):
     Add a service administrator.
     python -m flask add-admin --admin-email "xyz@gmail.com"
     """
-    from app import db, User
+    from app import db
+    from user.models import User
     try:
         user = User(username = admin_email,
             password = admin_email,
