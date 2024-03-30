@@ -22,7 +22,7 @@ python manage.py migrate
 python manage.py createsuperuser
 
 7. Run the server
-python manage.py runserver
+python manage.py runserver 8000
 
 deactivate
 
