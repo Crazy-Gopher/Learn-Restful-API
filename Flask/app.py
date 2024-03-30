@@ -23,8 +23,8 @@ def register_paths(app: Flask):
     app.add_url_rule('/healthcheck',view_func=healthcheck_view)
 
     views = [
-        (UserView, '/api/v1/users', ['GET', 'POST']),
-        (UserDetailView, '/api/v1//users/<int:id>', ['GET', 'DELETE', 'PUT', 'PATCH'])
+        (UserView, '/api/v1/users/', ['GET', 'POST']),
+        (UserDetailView, '/api/v1//users/<int:id>/', ['GET', 'DELETE', 'PUT', 'PATCH'])
     ]
 
     for view_obj, view_path, methods in views:
