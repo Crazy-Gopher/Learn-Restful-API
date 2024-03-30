@@ -96,3 +96,14 @@ create database django;
 \l - list databases
 \dt - list tables
 \c database_name  - change database
+
+
+## Unittest cases
+python -m coverage run -m pytest .
+coverage report -m
+
+
+# Precommit
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files

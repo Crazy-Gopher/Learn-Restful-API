@@ -30,7 +30,7 @@ class HealthCheckView(MethodView):
 
 from sqlalchemy.orm.exc import NoResultFound
 class UserView(MethodView):
-    
+
     def get(self) -> Response:
         from app import db, User
         users = User.query.all()
@@ -84,7 +84,7 @@ class UserDetailView(MethodView):
         response: Response = helpers.make_response(jsonify(resp.dump(resp)), HTTPStatus.OK)
         response.headers["Content-Type"] = "application/json"
         return response
-        # TypeError: The view function did not return a valid response. The return type must be a string, dict, 
+        # TypeError: The view function did not return a valid response. The return type must be a string, dict,
         # list, tuple with headers or status, Response instance, or WSGI callable, but it was a int.
 
     def delete(self, id: int):

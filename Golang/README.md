@@ -40,6 +40,3 @@ Cannot define new methods on non-local type controllers.Server
 
 go get -u github.com/dgrijalva/jwt-go
 go get -u golang.org/x/crypto
-
-
-

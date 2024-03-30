@@ -4,7 +4,7 @@ class ExeTimeMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
         # one time configuration and initialization
-    
+
     def __call__(self, request):
         # code to be executed for each request before
         # the view (later middleware) are called
@@ -16,5 +16,5 @@ class ExeTimeMiddleware:
 
         # Code to be executed for each request/response after
         # the view is called
-        
+
         return response

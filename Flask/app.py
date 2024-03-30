@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
 
 
-""" 
+"""
 # Path Paramter
 @app.route('/user/<int:id>', methods=['GET'])
 def show_user_profile(id):
@@ -179,7 +179,7 @@ def process_json():
 def process_form():
     data = request.form # form data
     print(data['username'])
-    print(data['password'])    
+    print(data['password'])
     return data
 
 from flask import url_for
