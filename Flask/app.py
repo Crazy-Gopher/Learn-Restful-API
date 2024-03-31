@@ -6,8 +6,6 @@ from flask_marshmallow import Marshmallow
 
 from config import Config
 from middlewares import run_before_request, run_after_request
-from urls import register_paths
-from commands import add_admin
 
 
 def app_config(app: Flask) -> None:
@@ -17,15 +15,9 @@ def app_config(app: Flask) -> None:
     app.logger.setLevel(logging.INFO)
 
 
-def register_commands(app: Flask):
-    app.cli.add_command(add_admin)
-
-
 def create_app():
     app: Flask = Flask(__name__)
     app_config(app)
-    register_paths(app)
-    register_commands(app)
     db = SQLAlchemy(app)
     ma = Marshmallow(app)
     return app, db, ma
@@ -35,22 +27,11 @@ app, db, ma = create_app()
 with app.app_context():
     db.create_all()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="8002", debug=True)
+# Import and register routes
+import routes
 
-# this is our database model
-# class User(db.Model):
-#     id = db.Column(db.Integer, primary_key = True)
-#     username = db.Column(db.String(100))
-#     password = db.Column(db.String(200))
-#     email = db.Column(db.String(50), unique = True)
-#     is_active = db.Column(db.Boolean())
 
-#     def _init_(self, username, password, email, is_active):
-#         self.username = username
-#         self.password = password
-#         self.email = email
-#         self.is_active = is_active
+
 
 
 # from app import ma

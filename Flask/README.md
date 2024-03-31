@@ -40,3 +40,7 @@ python manage.py migrate
 
 3. Stop the containers
 docker-compose down
+
+# Unit test
+python -m coverage run -m pytest .
+coverage report -m

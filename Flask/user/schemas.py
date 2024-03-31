@@ -2,7 +2,6 @@ from marshmallow import Schema, validate, post_load, EXCLUDE, fields
 from webargs import ValidationError
 from datetime import datetime
 
-
 from marshmallow import fields, ValidationError
 
 
@@ -23,7 +22,7 @@ class PinCode(fields.Field):
             raise ValidationError("Pin codes must contain only digits.") from error
 
 
-from marshmallow import Schema, fields
+
 class HealthStatusResp(Schema):
     Status = fields.Str()
 
@@ -33,12 +32,13 @@ def validate_str(val):
         raise ValidationError("String can not be blank")
 
 class RequestUser(Schema):
-    id = fields.Int(description="Id of user", required=False, location='json')
-    username = PinCode(validate=validate_str,description="username of a user", required=True, location='json')
-    password = fields.Str(validate=validate.Length(min=1),description="password of a user",required=True, location='json')
-    email = fields.Str(description="email of a user", required=True, location='json')
-    is_active = fields.Bool(description="status of a user", required=True, location='json')
-
+    id = fields.Int(required=False, metadata= {'description': 'Id of user', 'location': 'json'})
+    username = fields.Str(validate=validate_str, required=True, metadata= {'description': 'username of a user', 'location': 'json'})
+    password = fields.Str(validate=validate.Length(min=1), required=True, metadata= {'description': 'password of a user', 'location': 'json'})
+    email = fields.Str(required=True, metadata= {'description': 'email of a user', 'location': 'json'})
+    is_active = fields.Bool(required=True, metadata= {'description': 'status of a user', 'location': 'json'})
+    class Meta:
+        strict = True
     # callback_config = fields.Nested(
     #     CallbackRequest._name_, many=False,
     #     description="Callback configuration for the application",
@@ -57,29 +57,30 @@ class RequestUser(Schema):
 
 
 class ResponseUser(Schema):
-    id = fields.Int(description="Id of user", required=False, location='json')
-    username = fields.Str(validate=validate_str,description="username of a user", required=True, location='json')
-    password = fields.Str(validate=validate.Length(min=1),description="password of a user",required=True, location='json')
-    email = fields.Str(description="email of a user", required=True, location='json')
-    is_active = fields.Bool(description="status of a user", required=True, location='json')
+    id = fields.Int(required=False, metadata= {'description': 'Id of user', 'location': 'json'})
+    username = fields.Str(validate=validate_str, required=True, metadata= {'description': 'username of a user', 'location': 'json'})
+    password = fields.Str(validate=validate.Length(min=1), required=True, metadata= {'description': 'password of a user', 'location': 'json'})
+    email = fields.Str(required=True, metadata= {'description': 'email of a user', 'location': 'json'})
+    is_active = fields.Bool(required=True, metadata= {'description': 'status of a user', 'location': 'json'})
     class Meta:
         strict = True
 
 class UpdateRequestUser(Schema):
-    username = fields.Str(validate=validate_str,description="username of a user", required=True, location='json')
-    password = fields.Str(validate=validate.Length(min=1),description="password of a user",required=True, location='json')
-    email = fields.Str(description="email of a user", required=True, location='json')
-    is_active = fields.Bool(description="status of a user", required=True, location='json')
+    username = fields.Str(validate=validate_str, required=True, metadata= {'description': 'username of a user', 'location': 'json'})
+    password = fields.Str(validate=validate.Length(min=1), required=True, metadata= {'description': 'password of a user', 'location': 'json'})
+    email = fields.Str(required=True, metadata= {'description': 'email of a user', 'location': 'json'})
+    is_active = fields.Bool(required=True, metadata= {'description': 'status of a user', 'location': 'json'})
     class Meta:
         strict = True
 
 class PatchRequestUser(Schema):
-    username = fields.Str(validate=validate_str,description="username of a user", required=False, location='json')
-    password = fields.Str(validate=validate.Length(min=1),description="password of a user",required=False, location='json')
-    email = fields.Str(description="email of a user", required=False, location='json')
-    is_active = fields.Bool(description="status of a user", required=False, location='json')
+    username = fields.Str(validate=validate_str, required=False, metadata= {'description': 'username of a user', 'location': 'json'})
+    password = fields.Str(validate=validate.Length(min=1), required=False, metadata= {'description': 'password of a user', 'location': 'json'})
+    email = fields.Str(required=False, metadata= {'description': 'email of a user', 'location': 'json'})
+    is_active = fields.Bool(required=False, metadata= {'description': 'status of a user', 'location': 'json'})
     class Meta:
         strict = True
+
 
 class HealthStatusResp(Schema):
     service_status = fields.Str()
