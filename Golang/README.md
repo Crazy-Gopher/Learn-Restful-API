@@ -10,15 +10,15 @@ docker attach web
 docker-compose down
 
 >**Note** If the the error fastapi database does not exits, run the below commands to create databse
-docker exec -it postgres bash
+docker exec -it postgres_golang bash
 psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
 CREATE DATABASE gin;
 
 
 Notes:
 1. Golang api use authentications.(JWT authentication, Register and Login API)
-2. Golang app only have firstname and lastname, so need to change to make it same as other as like django, FastAPI
-3. Add Patch method API
+2. User resource fields match Django, FastAPI, and Flask: username, password, email, is_active
+3. PATCH `/api/v1/users/:id` is available for partial updates
 
 
 

@@ -28,9 +28,19 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
 	}
-	user := models.User{FirstName: input.FirstName, LastName: input.LastName}
+	var existing models.User
+	if err := server.DB.Where("email = ?", input.Email).First(&existing).Error; err == nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "user with email already exists"})
+		return
+	}
+	user := models.User{
+		Username: input.Username,
+		Password: input.Password,
+		Email:    input.Email,
+		IsActive: input.IsActive,
+	}
 	server.DB.Create(&user)
-	ctx.JSON(http.StatusOK, gin.H{"data": user})
+	ctx.JSON(http.StatusCreated, gin.H{"data": user})
 }
 
 func (server *Server) UpdateUser(ctx *gin.Context) {
@@ -44,7 +54,47 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	server.DB.Model(&user).Updates(input)
+	err := input.Validate()
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+		return
+	}
+	server.DB.Model(&user).Select("Username", "Password", "Email", "IsActive").Updates(models.User{
+		Username: input.Username,
+		Password: input.Password,
+		Email:    input.Email,
+		IsActive: input.IsActive,
+	})
+	ctx.JSON(http.StatusOK, gin.H{"data": user})
+}
+
+func (server *Server) PatchUser(ctx *gin.Context) {
+	var user models.User
+	if err := server.DB.Where("id = ?", ctx.Param("id")).First(&user).Error; err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	var input models.PatchUserRequest
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	updates := map[string]interface{}{}
+	if input.Username != nil {
+		updates["username"] = *input.Username
+	}
+	if input.Password != nil {
+		updates["password"] = *input.Password
+	}
+	if input.Email != nil {
+		updates["email"] = *input.Email
+	}
+	if input.IsActive != nil {
+		updates["is_active"] = *input.IsActive
+	}
+	if len(updates) > 0 {
+		server.DB.Model(&user).Updates(updates)
+	}
 	ctx.JSON(http.StatusOK, gin.H{"data": user})
 }
 

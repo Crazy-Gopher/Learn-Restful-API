@@ -26,8 +26,7 @@ func initializeRoutes() {
 	private.GET("/users", server.GetUsers)
 	private.POST("/users", server.CreateUser)
 	private.PUT("/users/:id", server.UpdateUser)
-	// Please add patch api as well
-	// private.PATCH("/users/:id", server.UpdateUser)
+	private.PATCH("/users/:id", server.PatchUser)
 	private.GET("/users/:id", server.GetUser)
 	private.DELETE("/users/:id", server.DeleteUser)
 

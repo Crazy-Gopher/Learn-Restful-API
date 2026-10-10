@@ -2,27 +2,39 @@ package models
 
 import (
 	"errors"
-
-	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
+	ID       uint   `json:"id" gorm:"primaryKey"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email" gorm:"unique"`
+	IsActive bool   `json:"is_active"`
 }
 
 type UserRequest struct {
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	IsActive bool   `json:"is_active"`
+}
+
+type PatchUserRequest struct {
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+	Email    *string `json:"email"`
+	IsActive *bool   `json:"is_active"`
 }
 
 func (u *UserRequest) Validate() error {
-	if u.FirstName == "" {
-		return errors.New("required firstname")
+	if u.Username == "" {
+		return errors.New("required username")
 	}
-	if u.LastName == "" {
-		return errors.New("required lastname")
+	if u.Password == "" {
+		return errors.New("required password")
+	}
+	if u.Email == "" {
+		return errors.New("required email")
 	}
 	return nil
 }

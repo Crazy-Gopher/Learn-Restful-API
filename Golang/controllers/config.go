@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 	"userapp/models"
 
 	"github.com/joho/godotenv"
@@ -29,10 +30,17 @@ func (server *Server) ConnectDB() {
 	var err error
 	if dbDriver == "postgres" {
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Kolkata", dbHost, dbUser, dbPass, dbName, dbPort)
-		server.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
-		if err != nil {
-			panic(fmt.Sprintf("Failed to connect to PostgreSQL database! %s", dsn))
+		const maxAttempts = 10
+		for attempt := 1; attempt <= maxAttempts; attempt++ {
+			server.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+			if err == nil {
+				break
+			}
+			log.Printf("database connection attempt %d/%d failed: %v", attempt, maxAttempts, err)
+			if attempt == maxAttempts {
+				panic(fmt.Sprintf("Failed to connect to PostgreSQL database! %s", dsn))
+			}
+			time.Sleep(2 * time.Second)
 		}
 	}
 }
