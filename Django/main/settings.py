@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME":"django",
+        "NAME":"postgres", # This needs to be changed when you are running outside the container.
         "USER":"postgres",
         "PASSWORD":"postgres",
         "HOST":"localhost",
