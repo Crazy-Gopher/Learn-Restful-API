@@ -10,10 +10,10 @@ python -m venv venv
 pip install -r .\requirements.txt
 
 4. Run postgresql
-docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=postgres -d postgres:16
-docker exec -it postgres bash
+docker run -p 5432:5432 --name postgres_django -e POSTGRES_PASSWORD=postgres -d postgres:16
+docker exec -it postgres_django bash
 psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
-
+create database django;
 
 5. If you are running outside the container then change the HOST from "postgres" to "localhost" in the DATABASES.
 
@@ -35,11 +35,11 @@ docker-compose up --build
 
 or
 docker-compose up -d --build
-docker attach userapp
+docker attach userapp_django
 
 
 2. Apply the migrations
-docker exec -it userapp bash
+docker exec -it userapp_django bash
 python manage.py migrate
 
 3. Stop the containers

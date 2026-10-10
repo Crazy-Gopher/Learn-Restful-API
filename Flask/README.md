@@ -1,4 +1,4 @@
-## Steps to Setup Django Application(Without Docker-Compose):
+## Steps to Setup Flask Application(Without Docker-Compose):
 
 1. Create Virtual Env
 python -m venv venv
@@ -11,8 +11,8 @@ pip install -r .\requirements.txt
 pip install flask_sqlalchemy
 
 4. Run postgresql
-docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=postgres -d postgres
-docker exec -it postgres bash
+docker run -p 5432:5432 --name postgres_flask -e POSTGRES_PASSWORD=postgres -d postgres:16
+docker exec -it postgres_flask bash
 psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
 create database flask;
 
@@ -25,22 +25,4 @@ python -m flask run -p 8002 --reload
 deactivate
 
 
-## Steps to Setup Django Application(With Docker-Compose):
-
-1. Run the docker-compose
-docker-compose up --build
-
-or
-docker-compose up -d --build
-docker attach userapp
-
-2. Apply the migrations
-docker exec -it userapp bash
-python manage.py migrate
-
-3. Stop the containers
-docker-compose down
-
-# Unit test
-python -m coverage run -m pytest .
-coverage report -m
+## Steps to Setup Flask Application(With Docker-Compose):

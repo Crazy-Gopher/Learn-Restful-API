@@ -1,10 +1,10 @@
 services:
-  web:
+  userapp_django:
     build: .
-    container_name: userapp
+    container_name: userapp_django
     restart: on-failure
     depends_on:
-      postgres:
+      postgres_django:
         condition: service_healthy
     ports:
       - 8000:8000
@@ -15,9 +15,9 @@ services:
     # command: /app/test.sh local
     # env_file: .env
 
-  postgres:
+  postgres_django:
     image: postgres:16
-    container_name: postgres
+    container_name: postgres_django
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres

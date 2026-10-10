@@ -24,6 +24,10 @@ def create_app():
 
 
 app, db, ma = create_app()
+
+# Models must be imported before create_all() so tables are registered
+from user.models import User  # noqa: F401
+
 with app.app_context():
     db.create_all()
 

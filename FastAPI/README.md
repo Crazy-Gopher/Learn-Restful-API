@@ -9,8 +9,8 @@ pip install fastapi uvicorn sqlalchemy psycopg2-binary
 pip install -r requirements.txt
 
 3. Start the PostgreSQL container and Create Database
-docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=postgres -d postgres
-docker exec -it postgres bash
+docker run -p 5432:5432 --name postgres_fastapi -e POSTGRES_PASSWORD=postgres -d postgres:16
+docker exec -it postgres_fastapi bash
 psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
 CREATE DATABASE fastapi;
 
@@ -30,7 +30,7 @@ docker attach userapp
 docker-compose down
 
 >**Note** If the the error fastapi database does not exits, run the below commands to create databse
-docker exec -it postgres bash
+docker exec -it postgres_fastapi bash
 psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
 CREATE DATABASE fastapi;
 
