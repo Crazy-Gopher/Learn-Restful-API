@@ -107,3 +107,4 @@ coverage report -m
 pip install pre-commit
 pre-commit install
 pre-commit run --all-files
+git commit -m "your commit message" --no-verify
