@@ -37,6 +37,10 @@ or
 docker-compose up -d --build
 docker attach userapp_django
 
+docker exec -it postgres_django bash
+psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
+create database django;
+
 
 2. Apply the migrations
 docker exec -it userapp_django bash

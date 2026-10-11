@@ -5,7 +5,6 @@ python -m venv venv
 .\venv\Scripts\activate
 
 2. Install the requirements
-pip install fastapi uvicorn sqlalchemy psycopg2-binary
 pip install -r requirements.txt
 
 3. Start the PostgreSQL container and Create Database
@@ -24,7 +23,11 @@ docker-compose up --build
 
 or
 docker-compose up -d --build
-docker attach userapp
+docker attach userapp_fastapi
+
+docker exec -it postgres_fastapi bash
+psql "host=127.0.0.1 port=5432 user=postgres dbname=postgres"
+CREATE DATABASE fastapi;
 
 2. Stop the containers
 docker-compose down
