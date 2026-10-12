@@ -89,7 +89,7 @@ DATABASES = {
         "NAME":"django",
         "USER":"postgres",
         "PASSWORD":"postgres",
-        "HOST":"postgres_django", # This needs to be changed when you are running outside the container.
+        "HOST":"localhost", # This needs to be changed when you are running outside the container.
         "PORT":"5432"
     }
 }
