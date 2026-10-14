@@ -102,6 +102,37 @@ create database django;
 \c database_name  - change database
 
 
+## JWT Authentication
+
+Uses `djangorestframework-simplejwt`. Tokens are issued for **Django auth users**
+(create one with `python manage.py createsuperuser`), not the custom `user.User` API model.
+
+1. Obtain tokens
+```
+POST /token/
+Content-Type: application/json
+
+{"username": "<django_username>", "password": "<password>"}
+```
+Response includes `access` and `refresh`.
+
+2. Call protected endpoints with the access token
+```
+Authorization: Bearer <access>
+GET /api/v1/users/
+```
+
+3. Refresh when the access token expires
+```
+POST /token/refresh/
+Content-Type: application/json
+
+{"refresh": "<refresh>"}
+```
+
+`UserViewSet` requires a valid JWT (`IsAuthenticated`).
+
+
 ## Unittest cases
 python -m coverage run -m pytest .
 coverage report -m

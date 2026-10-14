@@ -45,10 +45,6 @@ from user import views
 
 
 # Type 7 : DRF viewsets based view
-from .views import UserViewSet
-from rest_framework import renderers
-
-
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
